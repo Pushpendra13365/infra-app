@@ -1,0 +1,67 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-stacktrace: never
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/infra_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:Test}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 30
+          batch_versioned_data: true
+        order_inserts: true
+        order_updates: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 5000
+
+  devtools:
+    restart:
+      enabled: false
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+jwt:
+  secret: ${JWT_SECRET:ThisIsA64CharacterSecretKeyForHS512Algorithm1234567890AbCdEfGhIjKlMnOpQrStUvWxYz!!}
+  access-token-expiration-ms: 10800000
+  refresh-token-expiration-ms: 604800000
+
+security:
+  password:
+    history-length: 5
+  login:
+    max-attempts: 5
+    block-duration-ms: 900000
