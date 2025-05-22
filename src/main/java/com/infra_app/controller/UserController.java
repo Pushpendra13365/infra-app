@@ -19,7 +19,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) throws AccountLockedException {
-        return ResponseEntity.ok(userService.login(request));
+        LoginResponse response = userService.login(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh")
