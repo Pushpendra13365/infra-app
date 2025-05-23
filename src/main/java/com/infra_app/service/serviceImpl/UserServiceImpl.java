@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Invalid authorization header");
         }
 
-        String token = authHeader.substring(7).trim();
+        String token = authHeader.substring(7);
 
         if (token.isEmpty()) {
             throw new CustomUnauthorizedException("Token must not be empty");
