@@ -12,6 +12,7 @@ public class LoginResponse {
     private String message;
     private int status;
     private long timestamp;
+    private String messageCode;
 
     public LoginResponse(String token) {
         this.data = token;

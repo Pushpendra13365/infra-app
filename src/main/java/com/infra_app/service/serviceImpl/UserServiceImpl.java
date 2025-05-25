@@ -130,18 +130,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void logout(String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+    public void logout(String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Invalid authorization header");
         }
 
-        String token = authHeader.substring(7);
+        String token1 = token.substring(7);
 
-        if (token.isEmpty()) {
+        if (token1.isEmpty()) {
             throw new CustomUnauthorizedException("Token must not be empty");
         }
 
-        int updated = tokenRepo.invalidateToken(token);
+        int updated = tokenRepo.invalidateToken(token1);
 
         if (updated == 0) {
             log.warn("Token not found or already invalidated: {}", token);

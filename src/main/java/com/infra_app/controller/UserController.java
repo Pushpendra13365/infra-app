@@ -29,10 +29,9 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
-        userService.logout(authHeader);
-        return ResponseEntity.ok(Map.of("status", "success", "message", "Logout successful"));
+    public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String token) {
+        userService.logout(token);
+        return ResponseEntity.ok(ApiResponse.success("Logout successful", "LOGOUT_SUCCESS", token.substring(7), 200));
     }
 
     @PostMapping("/register")
