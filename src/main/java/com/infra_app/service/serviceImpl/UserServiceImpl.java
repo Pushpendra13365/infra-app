@@ -7,7 +7,7 @@ import com.infra_app.repository.*;
 import com.infra_app.security.JwtUtil;
 import com.infra_app.service.LoginAttemptService;
 import com.infra_app.service.UserService;
-import jakarta.persistence.Cacheable;
+import com.infra_app.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.auth.login.AccountLockedException;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public LoginResponse login(LoginRequest request) throws AccountLockedException {
+    public LoginResponse login(LoginRequest request, HttpServletResponse response) throws AccountLockedException {
         String ipAddress = getClientIP();
         if (loginAttemptService.isBlocked(ipAddress)) {
             throw new AccountLockedException("Account temporarily locked due to multiple failed attempts");
@@ -49,9 +50,9 @@ public class UserServiceImpl implements UserService {
                 throw new BadCredentialsException("Invalid username or password");
             }
 
-            if (user.isLocked()) {
-                throw new AccountLockedException("Account is locked. Please contact administrator");
-            }
+//            if (user.isLocked()) {
+//                throw new AccountLockedException("Account is locked. Please contact administrator");
+//            }
 
             loginAttemptService.loginSucceeded(ipAddress);
 
@@ -76,10 +77,11 @@ public class UserServiceImpl implements UserService {
                             .expiryTime(LocalDateTime.now().plusDays(7))
                             .build()
             ));
+            CookieUtil.addJwtCookie( response, accessToken);
 
             log.info("User '{}' logged in successfully", user.getUsername());
             return new LoginResponse(accessToken);
-        } catch (BadCredentialsException | AccountLockedException e) {
+        } catch (BadCredentialsException e) {
             log.warn("Failed login attempt for user: {}", request.getUserName());
             throw new CustomUnauthorizedException("Invalid username or password");
         }
@@ -130,7 +132,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void logout(String token) {
+    public void logout(String token, HttpServletResponse response) {
         if (token == null || !token.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Invalid authorization header");
         }
@@ -169,8 +171,9 @@ public class UserServiceImpl implements UserService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(role)
-                .locked(false)
                 .build();
+                //.locked(false)
+
 
         userRepo.save(user);
 

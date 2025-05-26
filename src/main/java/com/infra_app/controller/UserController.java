@@ -2,12 +2,13 @@ package com.infra_app.controller;
 
 import com.infra_app.dto.*;
 import com.infra_app.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.AccountLockedException;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -18,9 +19,10 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) throws AccountLockedException {
-        LoginResponse response = userService.login(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request,
+                                               HttpServletResponse response) throws AccountLockedException {
+        LoginResponse loginResponse = userService.login(request, response);
+        return ResponseEntity.ok(loginResponse);
     }
 
     @PostMapping("/refresh")
@@ -29,8 +31,8 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String token) {
-        userService.logout(token);
+    public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String token,HttpServletResponse response) {
+        userService.logout(token, response);
         return ResponseEntity.ok(ApiResponse.success("Logout successful", "LOGOUT_SUCCESS", token.substring(7), 200));
     }
 

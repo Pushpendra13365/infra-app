@@ -1,12 +1,12 @@
 package com.infra_app.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import lombok.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "users", indexes = {
@@ -37,20 +37,20 @@ public class User {
     @Column(name = "role", nullable = false, length = 20)
     private Role role;
 
-    @Column(name = "locked", nullable = false)
-    private boolean locked = false;
-
-    @Column(name = "failed_attempts")
-    private int failedAttempts = 0;
-
-    @Column(name = "lock_time")
-    private LocalDateTime lockTime;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+//    @Column(name = "locked", nullable = false)
+//    private boolean locked = false;
+//    | AccountLockedException
+//    @Column(name = "failed_attempts")
+//    private int failedAttempts = 0;
+//
+//    @Column(name = "lock_time")
+//    private LocalDateTime lockTime;
+//
+//    @CreationTimestamp
+//    @Column(name = "created_at", updatable = false)
+//    private LocalDateTime createdAt;
+//
+//    @UpdateTimestamp
+//    @Column(name = "updated_at")
+//    private LocalDateTime updatedAt;
 }

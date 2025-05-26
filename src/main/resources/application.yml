@@ -45,6 +45,16 @@ spring:
     redis:
       time-to-live: 600000
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  cache:
+    disabled: true
+
 management:
   endpoint:
     health:

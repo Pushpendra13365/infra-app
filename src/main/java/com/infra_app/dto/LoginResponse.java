@@ -1,6 +1,5 @@
 package com.infra_app.dto;
 
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
