@@ -22,7 +22,8 @@ public interface UserTokenRepository extends JpaRepository<UserToken, Long> {
 
 
     @Modifying
-    @Query("UPDATE UserToken t SET t.blacklisted = true WHERE t.token = :token")
+    @Query("UPDATE UserToken t SET t.blacklisted = true WHERE t.token = :token AND t.blacklisted = false")
     @SuppressWarnings("UnusedReturnValue")
     int invalidateToken(@Param("token") String token);
+
 }

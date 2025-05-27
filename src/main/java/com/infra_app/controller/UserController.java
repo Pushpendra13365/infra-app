@@ -25,15 +25,15 @@ public class UserController {
         return ResponseEntity.ok(loginResponse);
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
-        return ResponseEntity.ok(userService.refreshToken(request));
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String token,HttpServletResponse response) {
         userService.logout(token, response);
         return ResponseEntity.ok(ApiResponse.success("Logout successful", "LOGOUT_SUCCESS", token.substring(7), 200));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(userService.refreshToken(request));
     }
 
     @PostMapping("/register")

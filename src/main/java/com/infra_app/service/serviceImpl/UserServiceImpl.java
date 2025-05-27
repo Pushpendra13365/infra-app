@@ -15,8 +15,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.security.auth.login.AccountLockedException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -89,6 +92,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public void logout(String token, HttpServletResponse response) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid authorization header");
+        }
+
+        String token1 = token.substring(7);
+
+        if (token1.isEmpty()) {
+            throw new CustomUnauthorizedException("Token must not be empty");
+        }
+
+        int updated = tokenRepo.invalidateToken(token1);
+
+        if (updated == 0) {
+            log.warn("Token not found or already invalidated: {}", token);
+            throw new CustomUnauthorizedException("Token not found or already invalidated");
+        }
+
+        CookieUtil.clearJwtCookie(response);
+
+        log.info("Successfully logged out, token invalidated: {}", token);
+    }
+
+    @Override
+    @Transactional
     public AuthResponse refreshToken(RefreshTokenRequest request) {
         String refreshToken = request.getRefreshToken();
         if (!jwtUtil.validateToken(refreshToken)) {
@@ -128,29 +156,6 @@ public class UserServiceImpl implements UserService {
 
         log.info("User '{}' refreshed tokens", user.getUsername());
         return new AuthResponse(newAccessToken, newRefreshToken, jwtUtil.getAccessTokenExpirationMs());
-    }
-
-    @Override
-    @Transactional
-    public void logout(String token, HttpServletResponse response) {
-        if (token == null || !token.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Invalid authorization header");
-        }
-
-        String token1 = token.substring(7);
-
-        if (token1.isEmpty()) {
-            throw new CustomUnauthorizedException("Token must not be empty");
-        }
-
-        int updated = tokenRepo.invalidateToken(token1);
-
-        if (updated == 0) {
-            log.warn("Token not found or already invalidated: {}", token);
-            throw new CustomUnauthorizedException("Token not found or already invalidated");
-        }
-
-        log.info("Successfully logged out, token invalidated: {}", token);
     }
 
     @Override
@@ -223,6 +228,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private String getClientIP() {
-        return "unknown";
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = attr.getRequest();
+        return request.getRemoteAddr();
     }
+
 }
