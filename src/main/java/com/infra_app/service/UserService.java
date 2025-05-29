@@ -7,7 +7,7 @@ import javax.validation.Valid;
 
 public interface UserService {
     LoginResponse login(LoginRequest request, HttpServletResponse response) throws AccountLockedException;
-    void logout(String token, HttpServletResponse response);
+    Long logout(String token, HttpServletResponse response);
     RegisterResponse register(RegisterRequest request);
 
     AuthResponse refreshToken(@Valid RefreshTokenRequest request);

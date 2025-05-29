@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
             CookieUtil.addJwtCookie( response, accessToken);
 
             log.info("User '{}' logged in successfully", user.getUsername());
-            return new LoginResponse(accessToken);
+            return new LoginResponse(accessToken , user.getId());
         } catch (BadCredentialsException e) {
             log.warn("Failed login attempt for user: {}", request.getUserName());
             throw new CustomUnauthorizedException("Invalid username or password");
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void logout(String token, HttpServletResponse response) {
+    public Long logout(String token, HttpServletResponse response) {
         if (token == null || !token.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Invalid authorization header");
         }
@@ -102,6 +102,9 @@ public class UserServiceImpl implements UserService {
         if (token1.isEmpty()) {
             throw new CustomUnauthorizedException("Token must not be empty");
         }
+
+        Long userId = tokenRepo.findUserIdByToken(token1)
+                .orElseThrow(() -> new CustomUnauthorizedException("Invalid token"));
 
         int updated = tokenRepo.invalidateToken(token1);
 
@@ -113,6 +116,7 @@ public class UserServiceImpl implements UserService {
         CookieUtil.clearJwtCookie(response);
 
         log.info("Successfully logged out, token invalidated: {}", token);
+        return userId;
     }
 
     @Override

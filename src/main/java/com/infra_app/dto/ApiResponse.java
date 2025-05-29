@@ -10,29 +10,33 @@ import java.time.Instant;
 @AllArgsConstructor
 @Builder
 public class ApiResponse<T> {
-    private T data;
+   // private T data;
+    private Long userId;
     private String message;
     private String messageCode;
     private int status;
     private long timestamp;
 
-    public static <T> ApiResponse<T> success(String message, String messageCode, T data, int status) {
+    public static <T> ApiResponse<T> success(String message, String messageCode, int status, Long userId) {
         return ApiResponse.<T>builder()
-                .data(data)
                 .message(message)
                 .messageCode(messageCode)
                 .status(status)
                 .timestamp(Instant.now().toEpochMilli())
+                .userId(userId)
                 .build();
+                //.data(data)
+
     }
 
     public static <T> ApiResponse<T> error(String message, String messageCode, int status) {
         return ApiResponse.<T>builder()
-                .data(null)
                 .message(message)
                 .messageCode(messageCode)
                 .status(status)
                 .timestamp(Instant.now().toEpochMilli())
                 .build();
+                //.data(null)
+
     }
 }

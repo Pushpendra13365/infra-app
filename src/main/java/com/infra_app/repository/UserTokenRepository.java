@@ -26,4 +26,7 @@ public interface UserTokenRepository extends JpaRepository<UserToken, Long> {
     @SuppressWarnings("UnusedReturnValue")
     int invalidateToken(@Param("token") String token);
 
+    @Query("SELECT ut.user.id FROM UserToken ut WHERE ut.token = :token AND ut.blacklisted = false")
+    Optional<Long> findUserIdByToken(@Param("token") String token);
+
 }

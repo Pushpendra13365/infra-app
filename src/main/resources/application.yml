@@ -2,13 +2,13 @@ server:
   port: 8080
   error:
     include-message: always
-    include-stacktrace: never
+    include-stacktrace: always
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/infra_db
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:Test}
+    url: jdbc:postgresql://10.0.16.36:5432/infra_db_dev
+    username: ${DB_USERNAME:pushpendra}
+    password: ${DB_PASSWORD:pushpendra_infradbdev#2025}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -38,7 +38,7 @@ spring:
 
   devtools:
     restart:
-      enabled: false
+      enabled: true
 
   cache:
     type: redis
@@ -62,7 +62,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: "*"
 
 jwt:
   secret: ${JWT_SECRET:ThisIsA64CharacterSecretKeyForHS512Algorithm1234567890AbCdEfGhIjKlMnOpQrStUvWxYz!!}

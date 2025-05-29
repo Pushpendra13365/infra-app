@@ -27,8 +27,8 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String token,HttpServletResponse response) {
-        userService.logout(token, response);
-        return ResponseEntity.ok(ApiResponse.success("Logout successful", "LOGOUT_SUCCESS", token.substring(7), 200));
+        Long userId = userService.logout(token, response);
+        return ResponseEntity.ok(ApiResponse.success("Logout successful", "LOGOUT_SUCCESS", 200, userId)); // token.substring(7),
     }
 
     @PostMapping("/refresh")

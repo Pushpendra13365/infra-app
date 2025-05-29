@@ -7,17 +7,21 @@ import lombok.Getter;
 @AllArgsConstructor
 public class LoginResponse {
 
-    private String data;
+    private String token;
+    private Long userId;
     private String message;
     private int status;
     private long timestamp;
     private String messageCode;
 
-    public LoginResponse(String token) {
-        this.data = token;
-        this.message = "success";
+    public LoginResponse(String token, Long id) {
+        this.userId = id;
+        this.token = token;
+        this.message = "Login successful";
         this.status = 200;
         this.timestamp = System.currentTimeMillis();
+        this.messageCode = "LOGIN_SUCCESS";
     }
+
 }
 
